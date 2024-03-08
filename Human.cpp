@@ -145,8 +145,25 @@ std::istream& operator>>(std::istream& input, Human& human)
 	char tempFirstName[32];
 	char tempLastName[32];
 
-	input >> tempFirstName;
-	input >> tempLastName;
+	input.getline(tempFirstName, 32, ',');
+	if (!input)
+		throw "Problem reading first name!";
+
+	input.getline(tempLastName, 32, ',');
+	if (!input)
+		throw "Problem reading last name!";
+
+	char gender[7];
+	input.getline(gender, 7, ',');
+	if (!input)
+		throw "Problem reading gender!";
+
+	unsigned age;
+	input >> age;
+	if (!input)
+		throw "Problem reading age!";
+
+	input.ignore();
 
 	char* newFirstName = new (std::nothrow) char[strlen(tempFirstName) + 1];
 	char* newLastName = new (std::nothrow) char[strlen(tempLastName) + 1];
@@ -169,22 +186,20 @@ std::istream& operator>>(std::istream& input, Human& human)
 	human.firstName = newFirstName;
 	human.lastName = newLastName;
 
-
-	char gender[7];
-	input >> gender;
 	if (strcmp(gender, "Male") == 0)
 		human.gender = Human::Gender::Male;
 	else if (strcmp(gender, "Female") == 0)
 		human.gender = Human::Gender::Female;
 	else
 		human.gender = Human::Gender::Other;
-	input >> human.age;
+
+	human.age = age;
 
 	return input;
 }
 
 std::ostream& operator<<(std::ostream& output, const Human& human)
 {
-	output << human.firstName << " " << human.lastName << " " << human.getGender() << " " << human.age << "\n";
+	output << human.firstName << "," << human.lastName << "," << human.getGender() << "," << human.age << "\n";
 	return output;
 }

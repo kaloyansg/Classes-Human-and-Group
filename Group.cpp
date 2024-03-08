@@ -32,20 +32,26 @@ Group::Group(Human* arr, unsigned n)
 Group::Group(const char* fileName)
 {
 	std::ifstream file(fileName);
-	char a;
 
 	number = 0;
 	people = nullptr;
 	
-	file >> a;
-	while (!file.eof())
+	try
 	{
-		file.seekg(-1, std::ios::cur);
 		Human tempHuman;
 		file >> tempHuman;
-		this->addPerson(tempHuman);
-		file >> a;
+		while (!file.eof())
+		{
+			this->addPerson(tempHuman);
+			file >> tempHuman;
+		}
 	}
+	catch (const char* err)
+	{
+		if (!file.eof())
+			std::cerr << err;
+	}
+	
 
 	file.close();
 }
